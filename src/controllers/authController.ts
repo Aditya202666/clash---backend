@@ -6,7 +6,7 @@ import ApiError from "../utils/ApiError.js";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body;
-//   const payload = registerSchema.parse(body);
+  const payload = registerSchema.parse(body);
 });
 
 export { registerUser };
