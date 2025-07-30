@@ -4,7 +4,7 @@ import cors from "cors";
 import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { sendMail } from "./config/nodemailer.js";
+import routes from "./routes/index.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -23,12 +23,23 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "./views"));
 
 
+app.use(routes)
+// todo: -- test routes for error and prertify zod error from docs 
+
 // *routes
 app.get("/", async(req: Request, res: Response) => {
     const html = await ejs.renderFile(path.resolve(__dirname, "./views/emails/welcome.ejs"), {username: "Aditya"});
-    await sendMail("fiheb92510@amirei.com", "Welcome to Clash",html );
+    // await sendMail("fiheb92510@amirei.com", "Welcome to Clash",html );
+
+    await emailQueue.add(emailQueueName, {to: "fiheb92510@amirei.com", subject: "Welcome to Clash", body: html} );
+
     res.json({message: "Email sent successfully."});
 });
+
+
+// * import jobs
+import "./jobs/index.js"; 
+import { emailQueue, emailQueueName } from "./jobs/emailJob.js";
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

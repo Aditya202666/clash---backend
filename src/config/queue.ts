@@ -1,13 +1,16 @@
 import { DefaultJobOptions } from 'bullmq';
-import * as RedisModule from 'ioredis';
+import  RedisModule from 'ioredis';
 
-const Redis = (RedisModule as any).default || RedisModule;
+const Redis = RedisModule.default;
 
 export const redisConnection = new Redis({
     
   host: process.env.REDIS_HOST,
   port: 6379,
+  username: process.env.REDIS_USERNAME,
   password: process.env.REDIS_TOKEN,
+  tls: {},
+  maxRetriesPerRequest: null
 });
 
 export const defaultQueueOptions: DefaultJobOptions = {
@@ -19,5 +22,6 @@ export const defaultQueueOptions: DefaultJobOptions = {
     backoff: {
         type: 'exponential',
         delay: 3000
-    }
+    },
+    removeOnFail: false
 }
