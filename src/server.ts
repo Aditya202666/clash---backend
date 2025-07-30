@@ -9,7 +9,7 @@ import routes from "./routes/index.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app: Application = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3030;
 
 
 // *middleware
@@ -23,23 +23,27 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "./views"));
 
 
-app.use(routes)
-// todo: -- test routes for error and prertify zod error from docs 
-
 // *routes
-app.get("/", async(req: Request, res: Response) => {
-    const html = await ejs.renderFile(path.resolve(__dirname, "./views/emails/welcome.ejs"), {username: "Aditya"});
-    // await sendMail("fiheb92510@amirei.com", "Welcome to Clash",html );
+app.use(routes)
 
-    await emailQueue.add(emailQueueName, {to: "fiheb92510@amirei.com", subject: "Welcome to Clash", body: html} );
+// * error handler
+app.use(errorHandlerMiddleware)
 
-    res.json({message: "Email sent successfully."});
-});
+// app.get("/", async(req: Request, res: Response) => {
+//     const html = await ejs.renderFile(path.resolve(__dirname, "./views/emails/welcome.ejs"), {username: "Aditya"});
+//     // await sendMail("fiheb92510@amirei.com", "Welcome to Clash",html );
+
+//     await emailQueue.add(emailQueueName, {to: "fiheb92510@amirei.com", subject: "Welcome to Clash", body: html} );
+
+//     res.json({message: "Email sent successfully."});
+// });
 
 
 // * import jobs
 import "./jobs/index.js"; 
 import { emailQueue, emailQueueName } from "./jobs/emailJob.js";
+import { error } from "console";
+import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

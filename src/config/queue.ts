@@ -9,7 +9,7 @@ export const redisConnection = new Redis({
   port: 6379,
   username: process.env.REDIS_USERNAME,
   password: process.env.REDIS_TOKEN,
-  tls: {},
+  tls:  {} ,
   maxRetriesPerRequest: null
 });
 
