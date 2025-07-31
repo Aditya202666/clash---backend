@@ -1,7 +1,6 @@
 import express, { Request, Response, Application} from "express";
 import "dotenv/config";
 import cors from "cors";
-import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 import routes from "./routes/index.js";
@@ -29,14 +28,13 @@ app.use(routes)
 // * error handler
 app.use(errorHandlerMiddleware)
 
-// app.get("/", async(req: Request, res: Response) => {
-//     const html = await ejs.renderFile(path.resolve(__dirname, "./views/emails/welcome.ejs"), {username: "Aditya"});
-//     // await sendMail("fiheb92510@amirei.com", "Welcome to Clash",html );
+app.get("/", async(req: Request, res: Response) => {
+    
+    const html = await renderEmailEjs("auth/verify-email", {url: "https://google.com", name: "Amir"});
+    // await emailQueue.add(emailQueueName, {to: "fiheb92510@amirei.com", subject: "Welcome to Clash", body: html} );
 
-//     await emailQueue.add(emailQueueName, {to: "fiheb92510@amirei.com", subject: "Welcome to Clash", body: html} );
-
-//     res.json({message: "Email sent successfully."});
-// });
+    res.render("emails/auth/verify-email-error")
+});
 
 
 // * import jobs
@@ -44,6 +42,8 @@ import "./jobs/index.js";
 import { emailQueue, emailQueueName } from "./jobs/emailJob.js";
 import { error } from "console";
 import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
+import { renderEmailEjs } from "./helpers/renderEmailEjs.js";
+import { name } from "ejs";
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

@@ -1,4 +1,4 @@
-<%- include('../partials/header') %>
+<%- include('../../partials/header') %>
 
 <div style="max-width: 600px; margin: 20px auto; padding: 0 20px;
             font-family: Arial, sans-serif; color: #111827; background-color: #ffffff;
@@ -16,15 +16,22 @@
     </h1>
   </div>
 
-  <!-- Greeting -->
-  <p style="text-align: center; font-size: 18px; margin: 20px 0 0;">Welcome to Clash, <%= name %>!</p>
 
-  <!-- Intro and message -->
+  <!-- Message -->
   <div style="margin: 30px 20px; font-size: 16px; line-height: 1.6;">
-    <p>We're excited to have you with us.</p>
-    <p><strong>Clash</strong> is a simple but powerful way to get anonymous opinions on your images. Upload two choices, share the link, and let the community decide which one stands out — no bias, no names, just real feedback.</p>
-    <p>It’s never been easier to settle the question: <em>Which one looks better?</em></p>
-    <p><strong>Discover clarity. Decide confidently. Only with Clash.</strong></p>
+    <p>Thank you for signing up for <strong>Clash</strong>!</p>
+    <p>Please confirm your email address by clicking the button below. This helps us ensure the security of your account.</p>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="<%= url %>" target="_blank" style=" background: linear-gradient(to right, #6366f1, #ec4899);
+        color: white; padding: 12px 24px; text-decoration: none;
+        border-radius: 8px; font-weight: bold; display: inline-block;">
+        Verify Email
+      </a>
+    </div>
+
+    <p>If the button doesn't work, copy and paste the link below into your browser:</p>
+    <p style="word-break: break-all; color: #2563eb;"><%= url %></p>
   </div>
 
   <!-- Regards -->
@@ -35,4 +42,4 @@
 
 </div>
 
-<%- include('../partials/footer') %>
+<%- include('../../partials/footer') %>
