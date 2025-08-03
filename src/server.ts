@@ -33,7 +33,7 @@ app.get("/", async(req: Request, res: Response) => {
     const html = await renderEmailEjs("auth/verify-email", {url: "https://google.com", name: "Amir"});
     // await emailQueue.add(emailQueueName, {to: "fiheb92510@amirei.com", subject: "Welcome to Clash", body: html} );
 
-    res.render("emails/auth/verify-email-error")
+    res.render("info/verify-email-error", { loginURL: `${process.env.CLIENT_APP_URL}/login` });
 });
 
 

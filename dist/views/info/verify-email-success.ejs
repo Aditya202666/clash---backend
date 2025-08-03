@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Verification Link Invalid - Clash</title>
+  <title>Email Verified Successfully - Clash</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f9fafb;
-      color: #111827;
+      background: #f0fdf4; /* soft green background */
+      color: #14532d;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -22,10 +22,11 @@
       max-width: 480px;
       width: 100%;
       text-align: center;
+      border: 1px solid #bbf7d0; /* light green border */
     }
     h1 {
       font-size: 42px;
-      background: linear-gradient(to right, #6366f1, #ec4899);
+      background: linear-gradient(to right, #22c55e, #16a34a);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -39,15 +40,19 @@
       display: inline-block;
       margin-top: 20px;
       padding: 10px 20px;
-      background: #ec4899;
+      background: #22c55e;
       color: white;
       text-decoration: none;
       border-radius: 6px;
       font-weight: bold;
+      transition: background 0.2s ease;
+    }
+    a.button:hover {
+      background: #16a34a;
     }
     .small {
       font-size: 14px;
-      color: #6b7280;
+      color: #4b5563;
       margin-top: 16px;
       word-break: break-word;
     }
@@ -57,15 +62,15 @@
 
   <div class="box">
     <h1>Clash</h1>
-    <p>The verification link is invalid or has expired.</p>
-    <p>Please check your link and try again.</p>
-    
-    <!-- <a class="button" href="/resend-verification?email=you@example.com">Resend Link</a>
+    <p>Your email has been <strong>successfully verified</strong>.</p>
+    <p>You may now log in to your account.</p>
+
+    <a class="button" href="<%= loginURL %>">Go to Login</a>
 
     <p class="small">
       If the button doesn't work, visit:<br>
-      https://clash.example.com/resend-verification?email=you@example.com
-    </p> -->
+      <%= loginURL %>
+    </p>
   </div>
 
 </body>

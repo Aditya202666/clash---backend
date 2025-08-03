@@ -1,13 +1,15 @@
 import ApiError from "../utils/ApiError.js";
 import { ZodError, z } from "zod";
+import ApiResponse from "../utils/ApiResponse.js";
 export const errorHandlerMiddleware = (err, req, res, next) => {
     //  * Default values in case error is not APiError
-    let statusCode = 400;
+    let statusCode = 422;
     let message = "Validation Error.";
     let success = false;
     if (err instanceof ZodError) {
         const flattedError = z.flattenError(err);
-        res.status(statusCode).json({ success, message, errors: flattedError });
+        res.status(statusCode).json(new ApiResponse(statusCode, message, flattedError));
+        console.log(flattedError);
         return;
     }
     if (process.env.NODE_ENV === "development") {
@@ -20,6 +22,6 @@ export const errorHandlerMiddleware = (err, req, res, next) => {
         statusCode = err.statusCode;
         message = err.message;
     }
-    res.status(statusCode).json({ success, message });
+    res.status(statusCode).json(new ApiResponse(statusCode, message));
 };
 export default errorHandlerMiddleware;

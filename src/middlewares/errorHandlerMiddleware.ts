@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ApiError from "../utils/ApiError.js";
 import { ZodError, z } from "zod";
+import ApiResponse from "../utils/ApiResponse.js";
 
 export const errorHandlerMiddleware = (
   err: unknown,
@@ -9,13 +10,14 @@ export const errorHandlerMiddleware = (
   next: NextFunction
 ): void => {
   //  * Default values in case error is not APiError
-  let statusCode = 400;
+  let statusCode = 422;
   let message = "Validation Error.";
   let success = false;
 
   if (err instanceof ZodError) {
     const flattedError = z.flattenError(err);
-    res.status(statusCode).json({ success, message, errors: flattedError });
+    res.status(statusCode).json(new ApiResponse(statusCode, message, flattedError));
+    console.log(flattedError);
     return;
   }
 
@@ -30,7 +32,7 @@ export const errorHandlerMiddleware = (
     message = err.message;
   }
 
-  res.status(statusCode).json({ success, message });
+  res.status(statusCode).json(new ApiResponse(statusCode, message));
 };
 
 export default errorHandlerMiddleware;
