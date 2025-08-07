@@ -195,7 +195,7 @@ const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const token = await bcrypt.hash(uuid(), 10);
-  const url = `${process.env.CLIENT_APP_URL}/forgot-password?token=${token}&email=${payload.email}`;
+  const url = `${process.env.CLIENT_APP_URL}/reset-password?token=${token}&email=${payload.email}`;
   const emailBody = await renderEmailEjs("auth/reset-password", { url });
 
   await emailQueue.add(emailQueueName, {
