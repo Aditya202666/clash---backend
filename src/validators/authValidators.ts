@@ -18,3 +18,9 @@ export const registerSchema = z.object({
     message: "Passwords do not match.",
     path: ["confirm_password"],
 });
+
+
+export const loginSchema = z.object({
+    email: z.string().nonempty({message: "Email is required."}).email({message: "Invalid email address."}).toLowerCase().trim(),
+    password: z.string().nonempty({message: "Password is required."}).trim(),
+});

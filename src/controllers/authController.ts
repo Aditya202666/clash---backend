@@ -1,7 +1,9 @@
 import { Response, Request } from "express";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
-import { registerSchema } from "../validators/authValidators.js";
+import jwt from "jsonwebtoken";
+
+import { loginSchema, registerSchema } from "../validators/authValidators.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
@@ -10,7 +12,7 @@ import { renderEmailEjs } from "../helpers/renderEmailEjs.js";
 import { emailQueue, emailQueueName } from "../jobs/emailJob.js";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  console.log(req.body)
+  console.log(req.body);
   const body = req.body;
   const payload = registerSchema.parse(body);
 
@@ -97,4 +99,85 @@ const verifyEmailSuccess = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export { registerUser, verifyEmail, verifyEmailError, verifyEmailSuccess };
+const verifyCredentials = asyncHandler(async (req: Request, res: Response) => {
+  const body = req.body;
+  const payload = loginSchema.parse(body);
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: payload.email,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(
+    payload.password,
+    user.password
+  );
+
+  if (!isPasswordCorrect) {
+    throw new ApiError(422, "Invalid credentials.");
+  }
+
+  if (!user.email_verified_at) {
+    throw new ApiError(401, "Please verify your email.");
+  }
+
+  return res.json(new ApiResponse(200, "Credentials verified.", {}));
+});
+
+const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const body = req.body;
+  const payload = loginSchema.parse(body);
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: payload.email,
+    },
+  });
+
+  console.log(user); 
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(
+    payload.password,
+    user.password
+  );
+
+  if (!isPasswordCorrect) {
+    throw new ApiError(422, "Invalid credentials.");
+  }
+
+  if (!user.email_verified_at) {
+    throw new ApiError(401, "Please verify your email.");
+  }
+
+  const token = jwt.sign({id: user.id}, process.env.JWT_SECRET as string, {
+    expiresIn: "7d",
+  });
+
+  return res.json(new ApiResponse(200, "Login successful.", {
+    token: `Bearer ${token}`,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+
+  }));
+});
+
+export {
+  registerUser,
+  verifyEmail,
+  verifyEmailError,
+  verifyEmailSuccess,
+  verifyCredentials,
+  loginUser,
+};
