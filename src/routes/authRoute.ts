@@ -1,4 +1,4 @@
-import e, { Router } from "express";
+import { Router } from "express";
 import {
   loginUser,
   registerUser,
@@ -25,11 +25,10 @@ router.post("/login", loginUser);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 
-
-router.get("/user", verifyJwtToken, async(req, res) => {
+router.get("/user", verifyJwtToken, async (req, res) => {
   res.json({
-    user: req.user
-  })
-}); 
+    user: req.user,
+  });
+});
 
 export default router;

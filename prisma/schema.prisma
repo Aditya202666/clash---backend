@@ -23,4 +23,30 @@ model User {
   email_verified_at    DateTime?
   email_verify_token   String?
   created_at           DateTime  @default(now())
+
+  avatar_id String?
+  avatar    Image?  @relation(fields: [avatar_id], references: [id])
+
+  Clash Clash[]
+}
+
+model Clash {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  banner_id String
+  banner    Image  @relation(fields: [banner_id], references: [id])
+
+  user_id     String
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Image {
+  id        String  @id @default(cuid())
+  image_url String
+  image_id  String
+
+  User      User[]
+  Clash     Clash[]
 }
