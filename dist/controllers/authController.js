@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import jwt from "jsonwebtoken";
-import { loginSchema, registerSchema } from "../validators/authValidators.js";
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, } from "../validators/authValidators.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
@@ -74,7 +74,7 @@ const verifyEmailSuccess = asyncHandler(async (req, res) => {
         loginURL: `${process.env.CLIENT_APP_URL}/login`,
     });
 });
-const verifyCredentials = asyncHandler(async (req, res) => {
+const checkCredentials = asyncHandler(async (req, res) => {
     const body = req.body;
     const payload = loginSchema.parse(body);
     const user = await prisma.user.findUnique({
@@ -125,4 +125,66 @@ const loginUser = asyncHandler(async (req, res) => {
         },
     }));
 });
-export { registerUser, verifyEmail, verifyEmailError, verifyEmailSuccess, verifyCredentials, loginUser, };
+const forgotPassword = asyncHandler(async (req, res) => {
+    const body = req.body;
+    const payload = forgotPasswordSchema.parse(body);
+    const user = await prisma.user.findUnique({
+        where: {
+            email: payload.email,
+        },
+    });
+    if (!user) {
+        throw new ApiError(404, "User not found.");
+    }
+    const token = await bcrypt.hash(uuid(), 10);
+    const url = `${process.env.CLIENT_APP_URL}/forgot-password?token=${token}&email=${payload.email}`;
+    const emailBody = await renderEmailEjs("auth/reset-password", { url });
+    await emailQueue.add(emailQueueName, {
+        to: payload.email,
+        subject: "Clash reset password",
+        body: emailBody,
+    });
+    await prisma.user.update({
+        where: {
+            email: payload.email,
+        },
+        data: {
+            password_reset_token: token,
+            token_send_at: new Date().toISOString(),
+        },
+    });
+    return res.json(new ApiResponse(200, "Password reset link sent to your email.", {}));
+});
+const resetPassword = asyncHandler(async (req, res) => {
+    const body = req.body;
+    const payload = resetPasswordSchema.parse(body);
+    const user = await prisma.user.findUnique({
+        where: {
+            email: payload.email,
+        },
+    });
+    if (!user) {
+        throw new ApiError(404, "Link is invalid. Please check your link and try again.");
+    }
+    if (user.password_reset_token !== payload.token) {
+        throw new ApiError(404, "Link is invalid. Please check your link and try again.");
+    }
+    const linkSentAt = new Date(user.token_send_at);
+    const afterTenMinutes = new Date(linkSentAt.getTime() + 10 * 60 * 1000);
+    if (new Date() > afterTenMinutes) {
+        throw new ApiError(404, "Link has expired. Please request a new link.");
+    }
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
+    await prisma.user.update({
+        where: {
+            email: payload.email,
+        },
+        data: {
+            password: hashedPassword,
+            password_reset_token: null,
+            token_send_at: null,
+        },
+    });
+    return res.json(new ApiResponse(200, "Password reset successful.", {}));
+});
+export { registerUser, verifyEmail, verifyEmailError, verifyEmailSuccess, checkCredentials, loginUser, forgotPassword, resetPassword, };

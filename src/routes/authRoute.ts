@@ -2,10 +2,12 @@ import e, { Router } from "express";
 import {
   loginUser,
   registerUser,
-  verifyCredentials,
+  checkCredentials,
   verifyEmail,
   verifyEmailError,
   verifyEmailSuccess,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/authController.js";
 import { verifyJwtToken } from "../middlewares/verifyJwtToken.js";
 
@@ -17,8 +19,12 @@ router.get("/email-verify", verifyEmail);
 router.get("/email-verify-error", verifyEmailError);
 router.get("/email-verify-success", verifyEmailSuccess);
 
-router.post("/verify-credentials", verifyCredentials);
+router.post("/check/credentials", checkCredentials);
 router.post("/login", loginUser);
+
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
+
 
 router.get("/user", verifyJwtToken, async(req, res) => {
   res.json({
