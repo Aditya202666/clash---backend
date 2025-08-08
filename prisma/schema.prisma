@@ -34,6 +34,7 @@ model Clash {
   id          String  @id @default(cuid())
   title       String
   description String?
+  expire_at DateTime
 
   banner_id String
   banner    Image  @relation(fields: [banner_id], references: [id])
