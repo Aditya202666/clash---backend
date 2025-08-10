@@ -28,6 +28,7 @@ export const uploadOnCloudinary = async (
 
     const uploadResponse = await cloudinary.uploader.upload(fileLocalPath, {
       resource_type: fileType,
+      transformation: { quality: "auto"},
     });
 
     return uploadResponse;
