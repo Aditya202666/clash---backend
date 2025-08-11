@@ -101,6 +101,13 @@ const loginUser = asyncHandler(async (req, res) => {
         where: {
             email: payload.email,
         },
+        include: {
+            avatar: {
+                select: {
+                    image_url: true,
+                },
+            },
+        },
     });
     console.log(user);
     if (!user) {
@@ -118,11 +125,11 @@ const loginUser = asyncHandler(async (req, res) => {
     });
     return res.json(new ApiResponse(200, "Login successful.", {
         token: `Bearer ${token}`,
-        user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-        },
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar?.image_url,
+        emailVerifiedAt: user.email_verified_at,
     }));
 });
 const forgotPassword = asyncHandler(async (req, res) => {

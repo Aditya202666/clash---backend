@@ -70,7 +70,29 @@ const getClash = asyncHandler(async (req: Request, res: Response) => {
     },
   });
   if (!clash) throw new ApiError(404, "Clash not found.");
+
+  res.json(new ApiResponse(200, "Clash fetched successfully.", clash ));
 });
+
+const updateClashDetails = asyncHandler(async (req: Request, res: Response) => {
+  const body = req.body;
+  const payload = clashSchema.parse(body);
+
+  const { id } = req.params;
+
+  const clash = await prisma.clash.update({
+    where: {
+      id: id,
+    },
+    data: {
+      title: payload.title,
+      description: payload.description,
+      expire_at: payload.expire_at,
+    },
+  });
+  res.json(new ApiResponse(200, "Clash updated successfully.", { clash }));
+  
+})
 
 const updateBanner = asyncHandler(async (req: Request, res: Response) => {
   const { id, banner_id } = req.params;
@@ -92,7 +114,7 @@ const updateBanner = asyncHandler(async (req: Request, res: Response) => {
 
   if (!banner) throw new ApiError(404, "Banner not found.");
 
-  res.json(new ApiResponse(200, "Banner updated.", { banner }));
+  res.json(new ApiResponse(200, "Banner updated successfully.",  banner ));
 });
 
-export { createClash, getAllClashes, getClash, updateBanner };
+export { createClash, getAllClashes, getClash, updateClashDetails, updateBanner };

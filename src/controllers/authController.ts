@@ -16,6 +16,7 @@ import prisma from "../config/database.js";
 import { renderEmailEjs } from "../helpers/renderEmailEjs.js";
 import { emailQueue, emailQueueName } from "../jobs/emailJob.js";
 import { date } from "zod";
+import { id } from "zod/locales";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   console.log(req.body);
@@ -143,6 +144,13 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     where: {
       email: payload.email,
     },
+    include: {
+      avatar: {
+        select: {
+          image_url: true,
+        },
+      },
+    },
   });
 
   console.log(user);
@@ -171,11 +179,11 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
   return res.json(
     new ApiResponse(200, "Login successful.", {
       token: `Bearer ${token}`,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar?.image_url ,
+      emailVerifiedAt: user.email_verified_at,
     })
   );
 });
