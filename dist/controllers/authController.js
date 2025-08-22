@@ -101,13 +101,6 @@ const loginUser = asyncHandler(async (req, res) => {
         where: {
             email: payload.email,
         },
-        include: {
-            avatar: {
-                select: {
-                    image_url: true,
-                },
-            },
-        },
     });
     console.log(user);
     if (!user) {
@@ -128,7 +121,6 @@ const loginUser = asyncHandler(async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        avatar: user.avatar?.image_url,
         emailVerifiedAt: user.email_verified_at,
     }));
 });

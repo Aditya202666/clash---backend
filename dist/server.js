@@ -1,5 +1,6 @@
 import express from "express";
 import "dotenv/config";
+import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import routes from "./routes/index.js";
@@ -7,6 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const port = process.env.PORT || 3030;
 // *middleware
+app.use(cors({ origin: process.env.CLIENT_APP_URL, }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // *view engine
@@ -17,9 +19,14 @@ app.use(routes);
 // * error handler
 app.use(errorHandlerMiddleware);
 app.get("/", async (req, res) => {
-    const html = await renderEmailEjs("auth/verify-email", { url: "https://google.com", name: "Amir" });
+    const html = await renderEmailEjs("auth/verify-email", {
+        url: "https://google.com",
+        name: "Amir",
+    });
     // await emailQueue.add(emailQueueName, {to: "fiheb92510@amirei.com", subject: "Welcome to Clash", body: html} );
-    res.render("emails/auth/reset-password", { url: `${process.env.CLIENT_APP_URL}/login` });
+    res.render("emails/auth/reset-password", {
+        url: `${process.env.CLIENT_APP_URL}/login`,
+    });
 });
 // * import jobs
 import "./jobs/index.js";

@@ -24,9 +24,6 @@ model User {
   email_verify_token   String?
   created_at           DateTime  @default(now())
 
-  avatar_id String?
-  avatar    Image?  @relation(fields: [avatar_id], references: [id])
-
   Clash Clash[]
 }
 
@@ -37,18 +34,38 @@ model Clash {
   expire_at DateTime
   created_at DateTime @default(now())
 
-  banner_id String
-  banner    Image  @relation(fields: [banner_id], references: [id])
+  banner ClashBanner? 
 
   user_id     String
   user User @relation(fields: [user_id], references: [id])
+
+  clash_item ClashItem[]
 }
 
-model Image {
+
+model ClashBanner {
+
   id        String  @id @default(cuid())
   image_url String
-  image_id  String
+  cloud_id  String
 
-  User      User[]
-  Clash     Clash[]
+  clash_id String @unique
+  clash Clash @relation(fields: [clash_id], references: [id])
+
 }
+
+
+
+model ClashItem {
+
+  id String  @id @default(cuid())
+  
+  image_url String
+  cloud_id String
+  image_number Int
+
+  clash_id String
+  clash Clash @relation(fields: [clash_id], references: [id])
+
+}
+

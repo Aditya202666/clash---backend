@@ -8,7 +8,7 @@ export const verifyJwtToken = async (req, res, next) => {
         }
         const token = authHeader.split(" ")[1];
         jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-            if (err) {
+            if (err?.message) {
                 throw new ApiError(401, "Unauthorized.");
             }
             req.user = user;

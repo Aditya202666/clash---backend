@@ -15,7 +15,6 @@ import ApiError from "../utils/ApiError.js";
 import prisma from "../config/database.js";
 import { renderEmailEjs } from "../helpers/renderEmailEjs.js";
 import { emailQueue, emailQueueName } from "../jobs/emailJob.js";
-import { date } from "zod";
 import { id } from "zod/locales";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
@@ -144,13 +143,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     where: {
       email: payload.email,
     },
-    include: {
-      avatar: {
-        select: {
-          image_url: true,
-        },
-      },
-    },
   });
 
   console.log(user);
@@ -182,7 +174,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar?.image_url ,
       emailVerifiedAt: user.email_verified_at,
     })
   );
