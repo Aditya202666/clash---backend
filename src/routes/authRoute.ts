@@ -10,8 +10,11 @@ import {
   resetPassword,
 } from "../controllers/authController.js";
 import { verifyJwtToken } from "../middlewares/verifyJwtToken.js";
+import { authRateLimiter } from "../config/rateLimiter.js";
 
 const router = Router();
+
+router.use(authRateLimiter)
 
 router.post("/register", registerUser);
 

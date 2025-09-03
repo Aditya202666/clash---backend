@@ -3,16 +3,14 @@ import { Request, Response } from "express";
 import ApiResponse from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { clashSchema } from "../validators/clashValidators.js";
-import {
-  deleteFromCloudinary,
-} from "../config/cloudinary.js";
+import { deleteFromCloudinary } from "../config/cloudinary.js";
 import prisma from "../config/database.js";
 import ApiError from "../utils/ApiError.js";
 import {
   imageUploadQueue,
   imageUploadQueueEvents,
   imageUploadQueueName,
-} from "../jobs/ImageUploadJob.js"; 
+} from "../jobs/ImageUploadJob.js";
 
 const createClash = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body;
@@ -68,13 +66,24 @@ const getClash = asyncHandler(async (req: Request, res: Response) => {
       id: id,
     },
     include: {
-      banner: {
+      clash_item: {
         select: {
+          id: true,
           image_url: true,
+          likes: true,
         },
       },
+      ClashComment:{
+        select:{
+          id: true,
+          comment: true,
+          created_at: true
+        },
+        orderBy: [{ created_at: "desc" }],
+      }
     },
   });
+  // console.log(clash);
   if (!clash) throw new ApiError(404, "Clash not found.");
 
   res.json(new ApiResponse(200, "Clash fetched successfully.", clash));
@@ -83,7 +92,7 @@ const getClash = asyncHandler(async (req: Request, res: Response) => {
 const updateClashDetails = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body;
 
-  console.log(body);
+  // console.log(body);
 
   const payload = clashSchema.parse(body);
 

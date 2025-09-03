@@ -13,7 +13,7 @@ export const renderEmailEjs = async (
     payload
   );
 
-  console.log( path.resolve(__dirname, `../views/emails/${filename}.ejs`))
+  // console.log( path.resolve(__dirname, `../views/emails/${filename}.ejs`))
 
   return html;
 };

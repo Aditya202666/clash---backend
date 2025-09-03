@@ -28,44 +28,52 @@ model User {
 }
 
 model Clash {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String?
-  expire_at DateTime
-  created_at DateTime @default(now())
+  expire_at   DateTime
+  created_at  DateTime @default(now())
 
-  banner ClashBanner? 
+  banner ClashBanner?
 
-  user_id     String
-  user User @relation(fields: [user_id], references: [id])
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  clash_item ClashItem[]
+  clash_item   ClashItem[]
+  ClashComment ClashComment[]
 }
 
-
 model ClashBanner {
-
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   image_url String
   cloud_id  String
 
   clash_id String @unique
-  clash Clash @relation(fields: [clash_id], references: [id])
-
+  clash    Clash  @relation(fields: [clash_id], references: [id], onDelete: Cascade)
 }
-
-
 
 model ClashItem {
+  id String @id @default(cuid())
 
-  id String  @id @default(cuid())
-  
   image_url String
-  cloud_id String
-  image_number Int
+  cloud_id  String
+  likes     Int    @default(0)
 
   clash_id String
-  clash Clash @relation(fields: [clash_id], references: [id])
+  clash    Clash  @relation(fields: [clash_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
 
 }
 
+model ClashComment {
+  id      String @id @default(cuid())
+  comment String
+
+  clash_id String
+  clash    Clash  @relation(fields: [clash_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+}
+
+// todo: fix the query for get clash by id

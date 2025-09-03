@@ -1,18 +1,33 @@
 import express, { Request, Response, Application } from "express";
 import "dotenv/config";
 import cors from "cors";
+import helmet from "helmet";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createServer, Server as HttpServer} from "http"
+
 import routes from "./routes/index.js";
+import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
+import { renderEmailEjs } from "./helpers/renderEmailEjs.js";
+import { initSocket, setupSocket } from "./socket.js";
+import { globalRateLimiter } from "./config/rateLimiter.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app: Application = express();
 const port = process.env.PORT || 3030;
 
-// *middleware
+const httpServer: HttpServer = createServer(app);
 
+//  * initialize socket
+const io = initSocket(httpServer);
+setupSocket(io);
+
+
+// *middleware
 app.use(cors({origin: process.env.CLIENT_APP_URL,}));
+app.use(helmet());
+app.use(globalRateLimiter); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -24,7 +39,7 @@ app.set("views", path.resolve(__dirname, "./views"));
 // *routes
 app.use(routes);
 
-// * error handler
+// * Global error handler
 app.use(errorHandlerMiddleware);
 
 app.get("/", async (req: Request, res: Response) => {
@@ -39,14 +54,7 @@ app.get("/", async (req: Request, res: Response) => {
   });
 });
 
-// * import jobs
-import "./jobs/index.js";
-import { emailQueue, emailQueueName } from "./jobs/emailJob.js";
-import { error } from "console";
-import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
-import { renderEmailEjs } from "./helpers/renderEmailEjs.js";
-import { name } from "ejs";
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

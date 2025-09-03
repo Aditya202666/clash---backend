@@ -9,7 +9,7 @@ export const errorHandlerMiddleware = (err, req, res, next) => {
     if (err instanceof ZodError) {
         const flattedError = z.flattenError(err);
         res.status(statusCode).json(new ApiResponse(statusCode, message, flattedError));
-        console.log(flattedError);
+        // console.log(flattedError);
         return;
     }
     if (process.env.NODE_ENV === "development") {

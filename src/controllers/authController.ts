@@ -18,7 +18,7 @@ import { emailQueue, emailQueueName } from "../jobs/emailJob.js";
 import { id } from "zod/locales";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  console.log(req.body);
+  // console.log(req.body);
   const body = req.body;
   const payload = registerSchema.parse(body);
 
@@ -145,7 +145,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  console.log(user);
+  // console.log(user);
 
   if (!user) {
     throw new ApiError(404, "User not found.");

@@ -9,7 +9,7 @@ import prisma from "../config/database.js";
 import { renderEmailEjs } from "../helpers/renderEmailEjs.js";
 import { emailQueue, emailQueueName } from "../jobs/emailJob.js";
 const registerUser = asyncHandler(async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const body = req.body;
     const payload = registerSchema.parse(body);
     const existingUser = await prisma.user.findUnique({
@@ -102,7 +102,7 @@ const loginUser = asyncHandler(async (req, res) => {
             email: payload.email,
         },
     });
-    console.log(user);
+    // console.log(user);
     if (!user) {
         throw new ApiError(404, "User not found.");
     }

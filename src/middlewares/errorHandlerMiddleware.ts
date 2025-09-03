@@ -17,7 +17,7 @@ export const errorHandlerMiddleware = (
   if (err instanceof ZodError) {
     const flattedError = z.flattenError(err);
     res.status(statusCode).json(new ApiResponse(statusCode, message, flattedError));
-    console.log(flattedError);
+    // console.log(flattedError);
     return;
   }
 
