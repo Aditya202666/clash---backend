@@ -7,7 +7,7 @@
     "start": "node ./dist/server.js",
     "server": "nodemon ./dist/server.js",
     "watch": "tsc -w",
-    "build": "tsc && npm run copy-files",
+    "build": "npm install && tsc && npm run copy-files",
     "dev": "concurrently \"npm run watch\" \"npm run watch-views\" \"npm run server\" ",
     "copy-files": "copyfiles -u 1 \"src/views/**/*\" dist/ ",
     "watch-views": "nodemon --watch src/views -e ejs -x \"npm run copy-files\" "
@@ -34,10 +34,10 @@
     "prisma": "^6.12.0",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0",
-    "zod": "^4.0.13",
-    "@types/node": "^24.3.1"
+    "zod": "^4.0.13"
   },
   "devDependencies": {
+    "@types/node": "^24.3.1",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/ejs": "^3.1.5",
