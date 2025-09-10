@@ -23,6 +23,7 @@ const httpServer: HttpServer = createServer(app);
 const io = initSocket(httpServer);
 setupSocket(io);
 
+app.set('trust proxy', 1); //* trust first proxy (needed for Render/Heroku/etc.)
 
 // *middleware
 app.use(cors({origin: process.env.CLIENT_APP_URL,}));
